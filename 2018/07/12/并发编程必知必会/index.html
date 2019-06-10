@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JVM,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="线程创建的方式继承Thread类 123456789101112131415public class ThreadTest extends Thread &amp;#123;    //重写run方法    @Override    public void run() &amp;#123;        System.out.println(getName());    &amp;#125;    public stat">
+<meta name="keywords" content="JVM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="并发编程必知必会">
+<meta property="og:url" content="http://yoursite.com/2018/07/12/并发编程必知必会/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="线程创建的方式继承Thread类 123456789101112131415public class ThreadTest extends Thread &amp;#123;    //重写run方法    @Override    public void run() &amp;#123;        System.out.println(getName());    &amp;#125;    public stat">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://github.com/echolixiaopeng/blog/raw/master/data/java-thread-life-cycle.png">
+<meta property="og:updated_time" content="2018-12-25T01:53:38.104Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="并发编程必知必会">
+<meta name="twitter:description" content="线程创建的方式继承Thread类 123456789101112131415public class ThreadTest extends Thread &amp;#123;    //重写run方法    @Override    public void run() &amp;#123;        System.out.println(getName());    &amp;#125;    public stat">
+<meta name="twitter:image" content="https://github.com/echolixiaopeng/blog/raw/master/data/java-thread-life-cycle.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/07/12/并发编程必知必会/">
+
+
+
+
+
+  <title>并发编程必知必会 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/12/并发编程必知必会/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">并发编程必知必会</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-07-12T00:00:00+08:00">
+                2018-07-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JAVA/" itemprop="url" rel="index">
+                    <span itemprop="name">JAVA</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="线程创建的方式"><a href="#线程创建的方式" class="headerlink" title="线程创建的方式"></a>线程创建的方式</h4><p><code>继承Thread类</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class ThreadTest extends Thread &#123;</span><br><span class="line"></span><br><span class="line">    //重写run方法</span><br><span class="line">    @Override</span><br><span class="line">    public void run() &#123;</span><br><span class="line">        System.out.println(getName());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        //调用start方法启动线程</span><br><span class="line">        new ThreadTest().start();</span><br><span class="line">        System.out.println(&quot;main&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>实现Runable接口</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class RunnableTest implements Runnable &#123;</span><br><span class="line"></span><br><span class="line">    //实现run方法</span><br><span class="line">    @Override</span><br><span class="line">    public void run() &#123;</span><br><span class="line">        System.out.println(&quot;run&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        //使用Runnable对象，创建Thread对象</span><br><span class="line">        new Thread(new RunnableTest()).start();</span><br><span class="line">        System.out.println(&quot;main&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>实现Callable接口，结合FutureTask</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public class CallableTest implements Callable&lt;String&gt; &#123;</span><br><span class="line"></span><br><span class="line">    //实现call方法</span><br><span class="line">    @Override</span><br><span class="line">    public String call() throws Exception &#123;</span><br><span class="line">        return &quot;call&quot;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        //使用Callable对象，创建FutureTask对象</span><br><span class="line">        FutureTask&lt;String&gt; future = new FutureTask&lt;&gt;(new CallableTest());</span><br><span class="line">        //使用FutureTask对象，创建Thread对象</span><br><span class="line">        new Thread(future).start();</span><br><span class="line">        System.out.println(future.get());</span><br><span class="line">        System.out.println(&quot;main&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="线程的生命周期"><a href="#线程的生命周期" class="headerlink" title="线程的生命周期"></a>线程的生命周期</h4><p>新建（new），就绪（runable），运行（running），阻塞（blocked），死亡（dead）五个状态。<br><img src="https://github.com/echolixiaopeng/blog/raw/master/data/java-thread-life-cycle.png" alt></p>
+<p><code>new -&gt; runable</code><br>新建的线程调用start方法，进入runable状态。</p>
+<p><code>runable -&gt; running</code><br>就绪的线程，由线程调度器调度，获取到CPU资源后进入running状态。</p>
+<p><code>running -&gt; runable</code><br>运行的线程，失去CPU资源或调用yield方法后，回到runable状态。</p>
+<p><code>running -&gt; blocked</code><br>运行的线程，调用sleep方法后，或调用阻塞IO方法时，或等待同步监视器，或等待notify时，或调用suspend方法后，进入阻塞状态。</p>
+<p><code>blocked -&gt; runable</code><br>sleep过了设定的时间，阻塞的IO方法已返回，已获取同步监视器，已收到notify，已调用resume方法恢复，进去就绪状态。</p>
+<p><code>running -&gt; dead</code><br>方法已经执行完毕，或执行时抛出未捕获的异常，或调用stop方法结束该线程。</p>
+<h4 id="线程控制"><a href="#线程控制" class="headerlink" title="线程控制"></a>线程控制</h4><p><code>thread.join()</code><br>当前线程等待指定线程完成。<br>调用线程将被阻塞，直到join方法加入的线程执行完毕为止。<br>join(long millis)，超过时间后将不再等待该线程。</p>
+<p><code>Thread.sleep()</code><br>当前线程进入阻塞状态。<br>sleep(long millis)，当前线程将阻塞状态，暂停指定时间。<br>即使系统中没有其他可执行的线程，sleep后的线程也不会执行。</p>
+<p><code>Thread.yield()</code><br>当前线程进入就绪状态。<br>多CPU环境下，该操作的效果不明显。</p>
+<p><code>Thread.currentThread.setPriority()</code><br>设置当前线程的优先级。<br>使用JDK常量指定优先级，保证移植性。</p>
+<p><code>thread.setDaemon()</code><br>设置线程为后台线程。<br>设置必须在调用start方法之前。<br>所有的前台线程都死亡，后台线程都会死亡。<br>前台线程默认创建的事前台线程，后台线程亦然。</p>
+<h4 id="线程同步"><a href="#线程同步" class="headerlink" title="线程同步"></a>线程同步</h4><blockquote>
+<p>死锁：两个线程互相等待对方释放同步监视器。</p>
+</blockquote>
+<p><code>同步代码块</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">synchronized(obj)&#123;</span><br><span class="line">//同步的代码</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>逻辑：加锁 -&gt; 修改 -&gt; 释放锁<br>obj是同步监视器。<br>任何时刻只能有一个线程获取同步监视器。<br>线程开始执行同步代码块之前，必须先获得同步监视器。<br>同步代码块执行完成之后，会释放同步监视器。</p>
+<p><code>同步方法</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">public synchronized void test()&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>逻辑：加锁 -&gt; 修改 -&gt; 释放锁<br>this是同步监视器。</p>
+<p><code>同步锁</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">reentrantLock.lock();</span><br><span class="line">try&#123;&#125;</span><br><span class="line">finally&#123;</span><br><span class="line">reentrantLock.unlock;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>显式的定义同步锁，显式的加锁，显式的释放锁。<br>只能有一个线程对Lock对象进行加锁。<br>ReentrantLock是Lock的实现。<br>ReentrantLock是重入锁，可对已经加锁的锁再次加锁。</p>
+<h4 id="线程通信"><a href="#线程通信" class="headerlink" title="线程通信"></a>线程通信</h4><p><code>传统的线程通信</code><br>obj.wait()方法：释放同步监视器，当前线程进入Blocked状态，不会再次竞争。<br>obj.notify()方法：唤醒在此同步监视器上的单个线程，选择是随机的。<br>obj.notifyAll()方法：唤醒在此同步监视器上的所有线程。<br>notify后，被唤醒的线程会再次竞争同步监视器。</p>
+<p><code>使用Condition控制</code><br>通过Lock对象的lock.newCondition()获取condition对象。<br>condition.await()相当于obj.wait()。<br>condition.signal()相当于obj.notify()。<br>condition.signalAll()相当于obj.notifyAll()。</p>
+<p><code>使用BlockingQueue</code><br>put时，队列已满，则阻塞该线程。<br>take时，队列已空，则阻塞该线程。</p>
+<h4 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h4><blockquote>
+<p>线程池适合任务处理时间短，且任务数量大的场景。<br>线程池优点：降低资源消耗，减少线程创建和销毁的消耗。<br>线程池优点：加快响应速度，不用等待线程创建。<br>线程池优点：线程可管理，无限制创建线程会降低系统稳定性，线程池可统一管理。<br>Executors 返回的线程池对象，会引起OOM问题。<br>推荐通过 ThreadPoolExecutor 的方式，创建线程池。</p>
+</blockquote>
+<h5 id="ThreadPoolExecutor"><a href="#ThreadPoolExecutor" class="headerlink" title="ThreadPoolExecutor"></a>ThreadPoolExecutor</h5><ul>
+<li><p><code>构造参数</code><br>corePoolSize：核心线程数量；<br>maximumPoolSize：最大线程数量；<br>workQueue：等待队列；<br>handler：表示线程池的饱和策略；</p>
+</li>
+<li><p><code>方法</code><br>execute()，提交任务。<br>shutdown（），将线程池设置成SHUTDOWN状态，然后中断所有正在执行的任务。<br>shutdownNow（），将线程池的状态设置为STOP，，然后尝试停止所有正在执行或暂停任务的线程，并返回等待执行任务的列表。</p>
+</li>
+</ul>
+<ul>
+<li><p><code>执行过程</code><br>如果workerCount &lt; corePoolSize，则创建并启动一个线程来执行新提交的任务；<br>如果workerCount &gt;= corePoolSize，且线程池内的阻塞队列未满，则将任务添加到该阻塞队列中；<br>如果workerCount &gt;= corePoolSize &amp;&amp; workerCount &lt; maximumPoolSize，且线程池内的阻塞队列已满，则创建并启动一个线程来执行新提交的任务；<br>如果workerCount &gt;= maximumPoolSize，并且线程池内的阻塞队列已满, 则根据拒绝策略来处理该任务, 默认的处理方式是直接抛异常。</p>
+</li>
+<li><p><code>线程池分配</code><br>CPU密集型任务：N+1个线程。<br>IO密集型任务：2N个线程。<br>混合型任务：拆分成一个CPU密集型任务和一个IO密集型任务。</p>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JVM/" rel="tag"># JVM</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/01/浅析JMM/" rel="next" title="浅析JMM">
+                <i class="fa fa-chevron-left"></i> 浅析JMM
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/12/杂谈Spring Framework/" rel="prev" title="杂谈Spring Framework">
+                杂谈Spring Framework <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#线程创建的方式"><span class="nav-number">1.</span> <span class="nav-text">线程创建的方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#线程的生命周期"><span class="nav-number">2.</span> <span class="nav-text">线程的生命周期</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#线程控制"><span class="nav-number">3.</span> <span class="nav-text">线程控制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#线程同步"><span class="nav-number">4.</span> <span class="nav-text">线程同步</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#线程通信"><span class="nav-number">5.</span> <span class="nav-text">线程通信</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#线程池"><span class="nav-number">6.</span> <span class="nav-text">线程池</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#ThreadPoolExecutor"><span class="nav-number">6.1.</span> <span class="nav-text">ThreadPoolExecutor</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

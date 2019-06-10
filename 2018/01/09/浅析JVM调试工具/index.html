@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JVM,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="JVM调试工具，适用于调试以下问题：OOM问题内存泄露问题CPU占用率高问题  top - 系统进程监控123456top -Hp &amp;lt;pid&amp;gt;  PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND">
+<meta name="keywords" content="JVM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅析JVM调试工具">
+<meta property="og:url" content="http://yoursite.com/2018/01/09/浅析JVM调试工具/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="JVM调试工具，适用于调试以下问题：OOM问题内存泄露问题CPU占用率高问题  top - 系统进程监控123456top -Hp &amp;lt;pid&amp;gt;  PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-12-25T01:48:09.938Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="浅析JVM调试工具">
+<meta name="twitter:description" content="JVM调试工具，适用于调试以下问题：OOM问题内存泄露问题CPU占用率高问题  top - 系统进程监控123456top -Hp &amp;lt;pid&amp;gt;  PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/01/09/浅析JVM调试工具/">
+
+
+
+
+
+  <title>浅析JVM调试工具 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/09/浅析JVM调试工具/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">浅析JVM调试工具</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-09T00:00:00+08:00">
+                2018-01-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JAVA/" itemprop="url" rel="index">
+                    <span itemprop="name">JAVA</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>JVM调试工具，适用于调试以下问题：<br>OOM问题<br>内存泄露问题<br>CPU占用率高问题</p>
+</blockquote>
+<h4 id="top-系统进程监控"><a href="#top-系统进程监控" class="headerlink" title="top - 系统进程监控"></a>top - 系统进程监控</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">top -Hp &lt;pid&gt;</span><br><span class="line"></span><br><span class="line">  PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND                                                  </span><br><span class="line">16786 root      20   0 5207600 851948   9692 S  0.7  2.6   1:31.38 java                                                     </span><br><span class="line">16783 root      20   0 5207600 851948   9692 S  0.3  2.6   2:09.71 java                                                     </span><br><span class="line">16785 root      20   0 5207600 851948   9692 S  0.3  2.6   1:31.53 java</span><br></pre></td></tr></table></figure>
+
+<p><code>参数说明</code></p>
+<blockquote>
+<p>-H 检查该进程内运行的线程状况<br>-p 通过指定监控进程ID来仅仅监控某个进程的状态。 </p>
+</blockquote>
+<p><code>结果列说明</code></p>
+<blockquote>
+<p>PID : 进程id<br>S : 进程状态。D=不可中断的睡眠状态 R=运行 S=睡眠 T=跟踪/停止 Z=僵尸进程<br>%CPU : 上次更新到现在的CPU时间占用百分比<br>%MEM : 进程使用的物理内存百分比<br>TIME+ : 进程使用的CPU时间总计（1:31.38，表示1分钟:31秒.38毫秒）</p>
+</blockquote>
+<h4 id="jps-java虚拟机进程监控"><a href="#jps-java虚拟机进程监控" class="headerlink" title="jps - java虚拟机进程监控"></a>jps - java虚拟机进程监控</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">jps -ml </span><br><span class="line"></span><br><span class="line">23424 /data/service-x-test/gateway-x/gateway-x.jar</span><br><span class="line">28098 service-xx-x-0.0.1-SNAPSHOT.jar </span><br><span class="line">5256 gateway-xx.jar --spring.profiles.active=test</span><br></pre></td></tr></table></figure>
+
+<p><code>参数说明</code></p>
+<blockquote>
+<p>-m:输出主函数传入的参数<br>-l: 输出应用程序主类完整package名称或jar完整名称</p>
+</blockquote>
+<h4 id="jstatck-查看Java进程内的线程堆栈信息"><a href="#jstatck-查看Java进程内的线程堆栈信息" class="headerlink" title="jstatck - 查看Java进程内的线程堆栈信息"></a>jstatck - 查看Java进程内的线程堆栈信息</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">jstack &lt;pid&gt;</span><br><span class="line"></span><br><span class="line">&quot;Druid-ConnectionPool-Create-641011362&quot; #26 daemon prio=5 os_prio=0 tid=0x00007f55898de000 nid=0x4165 waiting on condition [0x00007f55c3afd000]</span><br><span class="line">   java.lang.Thread.State: WAITING (parking)</span><br><span class="line">        at sun.misc.Unsafe.park(Native Method)</span><br><span class="line">        - parking to wait for  &lt;0x00000000b6a23ca0&gt; (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)</span><br><span class="line">        at java.util.concurrent.locks.LockSupport.park(LockSupport.java:175)</span><br><span class="line">        at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:2039)</span><br><span class="line">        at com.alibaba.druid.pool.DruidDataSource$CreateConnectionThread.run(DruidDataSource.java:2308)</span><br></pre></td></tr></table></figure>
+
+<p><code>结果列说明</code></p>
+<blockquote>
+<p>nid : 操作系统映射的线程id。16进制表示。<br>Thread.State : Waiting(等待唤醒)，Timed_Waiting(有时间限制的等待唤醒)，Runnable(得到CPU，就可以执行)</p>
+</blockquote>
+<h4 id="jmap"><a href="#jmap" class="headerlink" title="jmap"></a>jmap</h4><ul>
+<li>查看指定JVM进程的堆信息<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">jmap -heap &lt;pid&gt;</span><br><span class="line"></span><br><span class="line">Attaching to process ID 16694, please wait...</span><br><span class="line">Debugger attached successfully.</span><br><span class="line">Server compiler detected.</span><br><span class="line">JVM version is 25.144-b01</span><br><span class="line"></span><br><span class="line">using thread-local object allocation.</span><br><span class="line">Parallel GC with 4 thread(s)</span><br><span class="line"></span><br><span class="line">Heap Configuration: #堆内存初始化配置</span><br><span class="line">   MinHeapFreeRatio         = 0</span><br><span class="line">   MaxHeapFreeRatio         = 100</span><br><span class="line">   #-XX:MaxHeapSize=设置JVM堆的最大大小</span><br><span class="line">   MaxHeapSize              = 1258291200 (1200.0MB)</span><br><span class="line">   #-XX:NewSize=设置JVM堆的‘新生代’的默认大小</span><br><span class="line">   NewSize                  = 175112192 (167.0MB)</span><br><span class="line">   #-XX:MaxNewSize=设置JVM堆的‘新生代’的最大大小</span><br><span class="line">   MaxNewSize               = 419430400 (400.0MB)</span><br><span class="line">   #-XX:OldSize=设置JVM堆的‘老生代’的大小</span><br><span class="line">   OldSize                  = 351272960 (335.0MB)</span><br><span class="line">   #-XX:NewRatio=:‘新生代’和‘老生代’的大小比率</span><br><span class="line">   NewRatio                 = 2</span><br><span class="line">   SurvivorRatio            = 8</span><br><span class="line">   MetaspaceSize            = 21807104 (20.796875MB)</span><br><span class="line">   CompressedClassSpaceSize = 1073741824 (1024.0MB)</span><br><span class="line">   MaxMetaspaceSize         = 17592186044415 MB</span><br><span class="line">   G1HeapRegionSize         = 0 (0.0MB)</span><br><span class="line"></span><br><span class="line">Heap Usage:</span><br><span class="line">PS Young Generation</span><br><span class="line">Eden Space: #Eden区内存分布</span><br><span class="line">   capacity = 62914560 (60.0MB)</span><br><span class="line">   used     = 5889832 (5.616981506347656MB)</span><br><span class="line">   free     = 57024728 (54.383018493652344MB)</span><br><span class="line">   9.36163584391276% used</span><br><span class="line">From Space: #其中一个Survivor区的内存分布</span><br><span class="line">   capacity = 1048576 (1.0MB)</span><br><span class="line">   used     = 589824 (0.5625MB)</span><br><span class="line">   free     = 458752 (0.4375MB)</span><br><span class="line">   56.25% used</span><br><span class="line">To Space: #另一个Survivor区的内存分布</span><br><span class="line">   capacity = 1572864 (1.5MB)</span><br><span class="line">   used     = 0 (0.0MB)</span><br><span class="line">   free     = 1572864 (1.5MB)</span><br><span class="line">   0.0% used</span><br><span class="line">PS Old Generation #当前的Old区内存分布 </span><br><span class="line">   capacity = 376963072 (359.5MB)</span><br><span class="line">   used     = 114052600 (108.76903533935547MB)</span><br><span class="line">   free     = 262910472 (250.73096466064453MB)</span><br><span class="line">   30.25564265350639% used</span><br><span class="line"></span><br><span class="line">40297 interned Strings occupying 4669600 bytes.</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p><code>注意</code><br>jmap -heap有些时候会导致进程暂停，可通过jstat -gc获取内存目前每个区域的使用状况</p>
+<ul>
+<li>打印堆的对象统计<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">jmap -histo &lt;pid&gt;</span><br><span class="line"></span><br><span class="line"> num     #instances         #bytes  class name</span><br><span class="line">----------------------------------------------</span><br><span class="line">   1:         41799       30989904  [I</span><br><span class="line">   2:        299256       26082000  [C</span><br><span class="line">   3:         72156        8964856  [B</span><br><span class="line">   4:        291594        6998256  java.lang.String</span><br><span class="line">   5:         52692        4636896  java.lang.reflect.Method</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p><code>结果列说明</code></p>
+<blockquote>
+<p>B 代表 byte<br>C 代表 char<br>D 代表 double<br>F 代表 float<br>I 代表 int<br>J 代表 long<br>Z 代表 boolean<br>前边有 [ 代表数组， [I 就相当于 int[]<br>对象用 [L+ 类名表示</p>
+</blockquote>
+<ul>
+<li>导出JVM内存信息<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmap -dump:format=b,file=文件名 &lt;pid&gt;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p><code>结果说明</code></p>
+<blockquote>
+<p>导出的dump文件可以使用Java VisualVM 分析。<br>heap如果比较大的话，就会导致这个过程比较耗时。<br>执行的过程中为了保证dump的信息是可靠的，所以会暂停应用。<br>配置JVM启动参数，OOM时自动生成Dump文件。</p>
+</blockquote>
+<h4 id="jstat"><a href="#jstat" class="headerlink" title="jstat"></a>jstat</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">jstat -gc &lt;pid&gt; &lt;采集间隔时间ms&gt; &lt;采集次数&gt;</span><br><span class="line"></span><br><span class="line"> S0C    S1C    S0U    S1U      EC       EU        OC         OU       MC     MU    CCSC   CCSU   YGC     YGCT    FGC    FGCT     GCT   </span><br><span class="line">512.0  512.0   96.0   0.0   56320.0  56320.0   273408.0   38963.4   48384.0 46119.9 6144.0 5724.3   6712   22.214   2      0.216   22.429</span><br><span class="line">512.0  512.0   96.0   0.0   56320.0  56320.0   273408.0   38963.4   48384.0 46119.9 6144.0 5724.3   6712   22.214   2      0.216   22.429</span><br><span class="line">512.0  512.0   96.0   0.0   56320.0  56320.0   273408.0   38963.4   48384.0 46119.9 6144.0 5724.3   6712   22.214   2      0.216   22.429</span><br><span class="line">512.0  512.0   96.0   0.0   56320.0  56320.0   273408.0   38963.4   48384.0 46119.9 6144.0 5724.3   6712   22.214   2      0.216   22.429</span><br><span class="line">512.0  512.0   96.0   0.0   56320.0  56320.0   273408.0   38963.4   48384.0 46119.9 6144.0 5724.3   6712   22.214   2      0.216   22.429</span><br><span class="line">512.0  512.0   96.0   0.0   56320.0  56320.0   273408.0   38963.4   48384.0 46119.9 6144.0 5724.3   6712   22.214   2      0.216   22.429</span><br><span class="line">512.0  512.0   96.0   0.0   56320.0  56320.0   273408.0   38963.4   48384.0 46119.9 6144.0 5724.3   6712   22.214   2      0.216   22.429</span><br><span class="line">512.0  512.0   96.0   0.0   56320.0  56320.0   273408.0   38963.4   48384.0 46119.9 6144.0 5724.3   6712   22.214   2      0.216   22.429</span><br><span class="line">512.0  512.0   96.0   0.0   56320.0  56320.0   273408.0   38963.4   48384.0 46119.9 6144.0 5724.3   6712   22.214   2      0.216   22.429</span><br><span class="line">512.0  512.0   96.0   0.0   56320.0  56320.0   273408.0   38963.4   48384.0 46119.9 6144.0 5724.3   6712   22.214   2      0.216   22.429</span><br></pre></td></tr></table></figure>
+
+<p><code>结果列说明</code></p>
+<blockquote>
+<p>YGC : 从应用程序启动到采样时年轻代中gc次数<br>YGCT : 从应用程序启动到采样时年轻代中gc所用时间(s)<br>FGC : 从应用程序启动到采样时old代(全gc)gc次数<br>FGCT : 从应用程序启动到采样时old代(全gc)gc所用时间(s)<br>OC :  Old代的容量 (字节)<br>OU :  Old代目前已使用空间 (字节)</p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JVM/" rel="tag"># JVM</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/13/浅析JAVA垃圾回收/" rel="next" title="浅析JAVA垃圾回收">
+                <i class="fa fa-chevron-left"></i> 浅析JAVA垃圾回收
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/25/RabbitMQ - 延迟消息/" rel="prev" title="RabbitMQ - 延迟消息">
+                RabbitMQ - 延迟消息 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#top-系统进程监控"><span class="nav-number">1.</span> <span class="nav-text">top - 系统进程监控</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jps-java虚拟机进程监控"><span class="nav-number">2.</span> <span class="nav-text">jps - java虚拟机进程监控</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jstatck-查看Java进程内的线程堆栈信息"><span class="nav-number">3.</span> <span class="nav-text">jstatck - 查看Java进程内的线程堆栈信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jmap"><span class="nav-number">4.</span> <span class="nav-text">jmap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jstat"><span class="nav-number">5.</span> <span class="nav-text">jstat</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JVM,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="JRE只是JVM（Java Virtual Machine）标准的一个实现，JVM负责分析字节码，编译代码和执行代码。了解JVM有助于我们写出更高效的代码，下面的内容有助于你了解到JVM的架构和JVM的不同组建。 既然说结构，必须先上图 JVM的组成是什么？如上图所示，JVM由三个子系统构成。  类加载系统 （Class Loader Subsystem）执行时数据区域（Runtime Data">
+<meta name="keywords" content="JVM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅析JVM结构">
+<meta property="og:url" content="http://yoursite.com/2018/08/30/浅析JVM结构/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="JRE只是JVM（Java Virtual Machine）标准的一个实现，JVM负责分析字节码，编译代码和执行代码。了解JVM有助于我们写出更高效的代码，下面的内容有助于你了解到JVM的架构和JVM的不同组建。 既然说结构，必须先上图 JVM的组成是什么？如上图所示，JVM由三个子系统构成。  类加载系统 （Class Loader Subsystem）执行时数据区域（Runtime Data">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://github.com/echolixiaopeng/blog/raw/master/data/JVM-Architecture.png">
+<meta property="og:updated_time" content="2018-12-25T01:54:27.091Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="浅析JVM结构">
+<meta name="twitter:description" content="JRE只是JVM（Java Virtual Machine）标准的一个实现，JVM负责分析字节码，编译代码和执行代码。了解JVM有助于我们写出更高效的代码，下面的内容有助于你了解到JVM的架构和JVM的不同组建。 既然说结构，必须先上图 JVM的组成是什么？如上图所示，JVM由三个子系统构成。  类加载系统 （Class Loader Subsystem）执行时数据区域（Runtime Data">
+<meta name="twitter:image" content="https://github.com/echolixiaopeng/blog/raw/master/data/JVM-Architecture.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/30/浅析JVM结构/">
+
+
+
+
+
+  <title>浅析JVM结构 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/30/浅析JVM结构/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">浅析JVM结构</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-08-30T00:00:00+08:00">
+                2018-08-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JAVA/" itemprop="url" rel="index">
+                    <span itemprop="name">JAVA</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>JRE只是JVM（Java Virtual Machine）标准的一个实现，JVM负责分析字节码，编译代码和执行代码。了解JVM有助于我们写出更高效的代码，下面的内容有助于你了解到JVM的架构和JVM的不同组建。</p>
+<h3 id="既然说结构，必须先上图"><a href="#既然说结构，必须先上图" class="headerlink" title="既然说结构，必须先上图"></a>既然说结构，必须先上图</h3><p><img src="https://github.com/echolixiaopeng/blog/raw/master/data/JVM-Architecture.png" alt="JVM-Architecture"></p>
+<h3 id="JVM的组成是什么？"><a href="#JVM的组成是什么？" class="headerlink" title="JVM的组成是什么？"></a>JVM的组成是什么？</h3><p>如上图所示，JVM由三个子系统构成。</p>
+<blockquote>
+<p>类加载系统 （Class Loader Subsystem）<br>执行时数据区域（Runtime Data Area）<br>执行引擎（Execution Engine）</p>
+</blockquote>
+<h4 id="类加载系统-（Class-Loader-Subsystem）"><a href="#类加载系统-（Class-Loader-Subsystem）" class="headerlink" title="类加载系统 （Class Loader Subsystem）"></a>类加载系统 （Class Loader Subsystem）</h4><p>类加载系统处理过程包括<code>加载</code>和<code>链接</code>，并在类文件运行时，首次引用类时<code>初始化</code>类文件。</p>
+<h5 id="加载（loading）"><a href="#加载（loading）" class="headerlink" title="加载（loading）"></a>加载（loading）</h5><p>通过一个类的完全限定查找此类字节码文件，并利用字节码文件创建一个Class对象。</p>
+<blockquote>
+<p>Bootstrap Class Loader<br>Extension Class Loader<br>Application Class Loader</p>
+</blockquote>
+<p>在Java的日常应用程序开发中，类的加载几乎是由上述3种类加载器相互配合执行的，在必要时，我们还可以自定义类加载器。</p>
+<p>Java虚拟机对class文件采用的是<code>按需加载</code>的方式，也就是说当需要使用该类时才会将它的class文件加载到内存生成class对象。</p>
+<p>虚拟机在加载时，采用的是<code>双亲委派模式</code>。其工作原理的是，如果一个类加载器收到了类加载请求，它并不会自己先去加载，而是把这个请求委托给父类的加载器去执行，如果父类加载器还存在其父类加载器，则进一步向上委托，依次递归，请求最终将到达顶层的启动类加载器，如果父类加载器可以完成类加载任务，就成功返回，倘若父类加载器无法完成此加载任务，子加载器才会尝试自己去加载。</p>
+<h5 id="链接（linking）"><a href="#链接（linking）" class="headerlink" title="链接（linking）"></a>链接（linking）</h5><blockquote>
+<p>验证（Verify）：字节码验证器将验证字节码是否正确。<br>准备（Prepare) ：为类变量以初始值分配内存。<br>解释（Resolve）：符号引用替换为直接引用。</p>
+</blockquote>
+<h5 id="初始化（initialization）"><a href="#初始化（initialization）" class="headerlink" title="初始化（initialization）"></a>初始化（initialization）</h5><p>静态变量会被赋予初值，静态方法区会被执行</p>
+<h4 id="执行时数据区域（Runtime-Data-Area）"><a href="#执行时数据区域（Runtime-Data-Area）" class="headerlink" title="执行时数据区域（Runtime Data Area）"></a>执行时数据区域（Runtime Data Area）</h4><p>运行时数据区可以划分为五个区域</p>
+<blockquote>
+<p>方法区（Method Area）：线程共享，存储类级别的数据。<br>堆区（Heap Area）：线程共享，存储对象，对象中的变量和数组。<br>栈区（Stack Area）：线程私有，每个方法在执行的同时都会创建一个栈帧。<br>PC寄存器（PC Registers）：线程私有，存储当前执行指令地址。<br>本地方法堆栈（Native Method stacks）：线程私有，存储本地方法信息。</p>
+</blockquote>
+<h4 id="执行引擎（Execution-Engine）"><a href="#执行引擎（Execution-Engine）" class="headerlink" title="执行引擎（Execution Engine）"></a>执行引擎（Execution Engine）</h4><blockquote>
+<p>解释器：解释字节码，当一个方法被调用多次时，每次都需要一个新的解释。<br>JIT编译器：发现重复的代码时，编译整个字节码并将其更改为本地代码。<br>垃圾收集器：收集和删除未引用的对象。</p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JVM/" rel="tag"># JVM</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/19/API接口约定/" rel="next" title="API接口约定">
+                <i class="fa fa-chevron-left"></i> API接口约定
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/14/排错卷宗 - UDP肉机/" rel="prev" title="排错卷宗 - UDP肉机">
+                排错卷宗 - UDP肉机 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#既然说结构，必须先上图"><span class="nav-number">1.</span> <span class="nav-text">既然说结构，必须先上图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM的组成是什么？"><span class="nav-number">2.</span> <span class="nav-text">JVM的组成是什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#类加载系统-（Class-Loader-Subsystem）"><span class="nav-number">2.1.</span> <span class="nav-text">类加载系统 （Class Loader Subsystem）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#加载（loading）"><span class="nav-number">2.1.1.</span> <span class="nav-text">加载（loading）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#链接（linking）"><span class="nav-number">2.1.2.</span> <span class="nav-text">链接（linking）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#初始化（initialization）"><span class="nav-number">2.1.3.</span> <span class="nav-text">初始化（initialization）</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#执行时数据区域（Runtime-Data-Area）"><span class="nav-number">2.2.</span> <span class="nav-text">执行时数据区域（Runtime Data Area）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#执行引擎（Execution-Engine）"><span class="nav-number">2.3.</span> <span class="nav-text">执行引擎（Execution Engine）</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

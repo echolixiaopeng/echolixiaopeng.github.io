@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="MySQL,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="CHAR 与 VARCHAR  CHAR以固定长度的分配存储空间。VARCHAR根据实际存储的数据来分配最终的存储空间。VARCHAR类型的实际长度是它的值的实际长度+1。CHAR(M)定义的列的长度为固定的，M取值可以为0～255之间。VARCHAR(M)定义的列的长度为可变长字符串，M取值可以为0~65535之间。CHAR当字符位数不足时，系统并不会采用空格来填充。CHAR和VARCHAR存">
+<meta name="keywords" content="MySQL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="杂谈MySQL - 基础篇">
+<meta property="og:url" content="http://yoursite.com/2017/08/12/杂谈MySQL - 基础篇/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="CHAR 与 VARCHAR  CHAR以固定长度的分配存储空间。VARCHAR根据实际存储的数据来分配最终的存储空间。VARCHAR类型的实际长度是它的值的实际长度+1。CHAR(M)定义的列的长度为固定的，M取值可以为0～255之间。VARCHAR(M)定义的列的长度为可变长字符串，M取值可以为0~65535之间。CHAR当字符位数不足时，系统并不会采用空格来填充。CHAR和VARCHAR存">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-12-25T01:48:14.251Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="杂谈MySQL - 基础篇">
+<meta name="twitter:description" content="CHAR 与 VARCHAR  CHAR以固定长度的分配存储空间。VARCHAR根据实际存储的数据来分配最终的存储空间。VARCHAR类型的实际长度是它的值的实际长度+1。CHAR(M)定义的列的长度为固定的，M取值可以为0～255之间。VARCHAR(M)定义的列的长度为可变长字符串，M取值可以为0~65535之间。CHAR当字符位数不足时，系统并不会采用空格来填充。CHAR和VARCHAR存">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/08/12/杂谈MySQL - 基础篇/">
+
+
+
+
+
+  <title>杂谈MySQL - 基础篇 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/12/杂谈MySQL - 基础篇/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">杂谈MySQL - 基础篇</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-12T00:00:00+08:00">
+                2017-08-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/数据库/" itemprop="url" rel="index">
+                    <span itemprop="name">数据库</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <ul>
+<li><p><code>CHAR 与 VARCHAR</code></p>
+<blockquote>
+<p>CHAR以固定长度的分配存储空间。<br>VARCHAR根据实际存储的数据来分配最终的存储空间。<br>VARCHAR类型的实际长度是它的值的实际长度+1。<br>CHAR(M)定义的列的长度为固定的，M取值可以为0～255之间。<br>VARCHAR(M)定义的列的长度为可变长字符串，M取值可以为0~65535之间。<br>CHAR当字符位数不足时，系统并不会采用空格来填充。<br>CHAR和VARCHAR存储的内容超出设置的长度时，内容会被截断。<br>VARCHAR(50)和(200)存储hello所占空间一样，但后者在排序时会消耗更多内存。</p>
+</blockquote>
+</li>
+<li><p><code>TRUNCATE 与 DELETE</code></p>
+<blockquote>
+<p>DELETE命令删除的数据将存储在系统回滚段中，需要的时候，数据可以回滚恢复。<br>TRUNCATE命令删除的数据是不可以恢复的。<br>TRUNCATE TABLE是非常快的。<br>TRUNCATE之后的自增字段从头开始计数了，而DELETE的仍保留原来的最大数值。</p>
+</blockquote>
+</li>
+<li><p><code>float double 与 decimal</code></p>
+<blockquote>
+<p>float，double非标准类型，在DB中保存的是近似值。<br>Decimal则以字符串的形式保存数值。<br>小数类型为 decimal，禁止使用 float 和 double。<br>存储商品价格可以使用分作为单位，存储整数。</p>
+</blockquote>
+</li>
+<li><p><code>InnoDB 与 MyISAM</code></p>
+<blockquote>
+<p>InnoDB支持事务，MyISAM不支持；<br>InnoDB数据存储在共享表空间，MyISAM数据存储在文件中；<br>InnoDB支持行级锁，MyISAM只支持表锁；<br>InnoDB支持崩溃后的恢复，MyISAM不支持；<br>InnoDB支持外键，MyISAM不支持；<br>InnoDB不支持全文索引，MyISAM支持全文索引；</p>
+</blockquote>
+</li>
+<li><p><code>共享锁(读锁) 与 排他锁(写锁)</code></p>
+<blockquote>
+<p>共享锁又称读锁（在查询语句后面增加LOCK IN SHARE MODE），是读取操作创建的锁。其他用户可以并发读取数据，但任何事务都不能对数据进行修改（获取数据上的排他锁），直到已释放所有共享锁。<br>排他锁又称写锁（在查询语句后面增加FOR UPDATE），如果事务T对数据A加上排他锁后，则其他事务不能再对A加任任何类型的封锁。获准排他锁的事务既能读数据，又能修改数据。</p>
+</blockquote>
+</li>
+<li><p><code>表锁 与 行锁</code></p>
+<blockquote>
+<p>行锁的劣势：开销大，加锁慢，会出现死锁。<br>行锁的优势：锁的粒度小，发生锁冲突的概率低，处理并发的能力强。<br>表锁的优势：开销小；加锁快；无死锁<br>表锁的劣势：锁粒度大，发生锁冲突的概率高，并发处理能力低。</p>
+</blockquote>
+</li>
+<li><p><code>索引的类型</code></p>
+<blockquote>
+<p>普通索引：最基本的索引，没有任何约束限制。<br>唯一索引：和普通索引类似，但是具有唯一性约束。<br>主键索引：特殊的唯一索引，不允许有空值。</p>
+</blockquote>
+</li>
+<li><p><code>索引的创建原则</code></p>
+<blockquote>
+<p>创建索引的列是出现在WHERE或ON子句中的列。<br>索引列的基数越大，数据区分度越高，索引的效果越好。<br>对于字符串进行索引，应该制定一个前缀长度，可以节省大量的索引空间。<br>避免创建过多的索引，索引会额外占用磁盘空间，降低写操作效率。</p>
+</blockquote>
+</li>
+<li><p><code>索引的前缀原则</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">KEY(a,b,c)</span><br><span class="line">WHERE a = 1 AND b = 2 AND c = 3</span><br><span class="line">WHERE a = 1 AND b = 2</span><br><span class="line">WHERE a = 1</span><br><span class="line">#以上SQL语句可以用到索引</span><br><span class="line">WHERE b = 2 AND c = 3</span><br><span class="line">WHERE a = 1 AND c = 3</span><br><span class="line">#以上SQL语句用不到索引</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>关联查询</code></p>
+<blockquote>
+<p>内连接（INNER JOIN），外连接（LEFT/RIGHT JOIN）<br>INNER JOIN可以缩写为JOIN</p>
+</blockquote>
+</li>
+<li><p><code>联合查询</code></p>
+<blockquote>
+<p>UNION与UNION ALL<br>UNION ALL，不会合并重复的记录行<br>UNION 效率高于 UNION ALL</p>
+</blockquote>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/05/闲扯常用设计模式/" rel="next" title="闲扯常用设计模式">
+                <i class="fa fa-chevron-left"></i> 闲扯常用设计模式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/28/Hbase初识/" rel="prev" title="Hbase初识">
+                Hbase初识 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
