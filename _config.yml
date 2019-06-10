@@ -3,12 +3,12 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Hexo
+title: 李霄鹏的博客
 subtitle:
-description:
+description: 李霄鹏的博客
 keywords:
-author: John Doe
-language:
+author: hi@xiaopeng.li
+language: zh-Hans
 timezone:
 
 # URL
