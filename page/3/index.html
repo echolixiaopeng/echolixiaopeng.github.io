@@ -232,6 +232,231 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/02/Redis必知必会/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="hi@xiaopeng.li">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李霄鹏的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/05/02/Redis必知必会/" itemprop="url">Redis必知必会</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-02T00:00:00+08:00">
+                2018-05-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/数据库/" itemprop="url" rel="index">
+                    <span itemprop="name">数据库</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>开源KV数据库<br>由C语言编写<br>支持丰富的数据类型：string，set，list，sorted set，hash<br>数据操作具有原子性<br>支持数据持久化<br>可集群扩展 </p>
+</blockquote>
+<h4 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h4><ul>
+<li>速度快，整个数据库统统加载在内存当中进行操作；</li>
+<li>支持保存多种数据结构；</li>
+<li>操作都是原子性；</li>
+<li>支持事务；</li>
+<li>丰富的特性，支持有序集合，支持ttl，支持发布订阅；</li>
+</ul>
+<h4 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h4><p><code>string</code></p>
+<ul>
+<li>赋值：SET key value。如set hello world</li>
+<li>取值：GET key。如get hello。返回是world</li>
+<li>自增：INCR key。该key的值都会+1。该操作是原子操作。</li>
+<li>自减：DECR key。该key的值都会-1。该操作是原子操作。</li>
+</ul>
+<p><code>list</code></p>
+<ul>
+<li>向头部插入：LPUSH key value1 value2…</li>
+<li>向尾部插入：RPUSH key value1 value2…</li>
+<li>从头部弹出：LPOP key。返回被弹出的元素值。</li>
+<li>从尾部弹出：RPOP key。返回被弹出的元素值。</li>
+<li>列表元素个数：LLEN key。key不存在返回0。</li>
+<li>获取列表的子列表：LRANGE start end。</li>
+</ul>
+<p><code>set</code></p>
+<ul>
+<li>增加：SADD key value。</li>
+<li>删除：SREM key value。</li>
+<li>获取指定集合的所有元素：SMEMBERS key。</li>
+<li>判断某个元素是否存在：SISMEMBER key value。</li>
+<li>差集运算：SDIFF key1 key2…。对多个集合进行差集运算。</li>
+<li>交集运算：SINNER key1 key2…。对多个集合进行交集运算。</li>
+<li>并集运算：SUNION key1 key2…。对多个集合进行并集运算。</li>
+<li>获取集合中元素个数：SCARD key。返回集合中元素的总个数。</li>
+</ul>
+<p><code>sorted set</code></p>
+<ul>
+<li>增加：ZADD key sorce1 value1 sorce2 value2…。</li>
+<li>获取分数：ZSCORE key value。</li>
+<li>获取分数范围内的元素：ZRANGEBYSCORE key min max </li>
+<li>为某个元素增加分数：ZINCRBY key increment value。</li>
+</ul>
+<p><code>hash</code></p>
+<ul>
+<li>赋值：HSET key field value。</li>
+<li>取值：HGET key field。</li>
+<li>同一个key多个字段赋值：HMSET key field1 value1 field2 value2…。</li>
+<li>同一个KEY多个字段取值：HMGET key field1 fields2…。</li>
+<li>获取KEY的所有字段和所有值：HGETALL key。</li>
+<li>字段是否存在：HEXISTS key field。存在返回1，不存在返回0。<br>当字段不存在时赋值：HSETNX key field value。如果key下面的字段field不存在，则建立field字段，且值为value。如果field字段存在，则不执行任何操作。这个命令的是原子操作。</li>
+</ul>
+<h4 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h4><p><code>RDB</code></p>
+<blockquote>
+<p>#在900秒之后，如果至少有1个key发生变化，则dump内存快照<br>save 900 1  </p>
+</blockquote>
+<ul>
+<li>RDB持久化是指在指定的时间间隔内将内存中的数据集快照写入磁盘，实际操作过程是fork一个子进程，先将数据集写入临时文件，写入成功后，再替换之前的文件，用二进制压缩存储。</li>
+<li>性能最大化。对于Redis的服务进程而言，在开始持久化时，它唯一需要做的只是fork出子进程，之后再由子进程完成这些持久化的工作，这样就可以极大的避免服务进程执行IO操作了。</li>
+<li>相比于AOF机制，如果数据集很大，RDB的启动效率会更高。</li>
+<li>如果当数据集较大时，可能会导致整个服务器停止服务。</li>
+</ul>
+<p><code>AOF</code></p>
+<blockquote>
+<p>appendfsync always     #每次有数据修改发生时都会写入AOF文件。<br>appendfsync everysec  #每秒钟同步一次，该策略为AOF的缺省策略。<br>appendfsync no          #从不同步。高效但是数据不会被持久化。</p>
+</blockquote>
+<ul>
+<li>AOF持久化以日志的形式记录服务器所处理的每一个写、删除操作，查询操作不会记录，以文本的方式记录，可以打开文件看到详细的操作记录。</li>
+<li>该机制可以带来更高的数据安全性。</li>
+<li>Redis 4.0 推出RDB-AOF 混合持久化。</li>
+</ul>
+<h4 id="内存淘汰"><a href="#内存淘汰" class="headerlink" title="内存淘汰"></a>内存淘汰</h4><p>maxmemory参数，可以控制其最大可用内存大小（字节）。<br>超过maxmemory时，根据maxmemory-policy参数进行内存淘汰。</p>
+<blockquote>
+<p>volatile-lru     使用LRU算法删除一个键（只对设置了生存时间的键）<br>allkeys-lru       使用LRU算法删除一个键<br>volatile-random   随机删除一个键（只对设置了生存时间的键）<br>allkeys-random    随机删除一个键<br>volatile-ttl      删除生存时间最近的一个键<br>noeviction（默认配置）  不删除键，只返回错误</p>
+</blockquote>
+<h4 id="集群扩展"><a href="#集群扩展" class="headerlink" title="集群扩展"></a>集群扩展</h4><p><code>官方cluster方案</code><br>配置成主从结构，即一个master主节点，挂n个slave从节点。如果主节点失效，redis cluster会根据选举算法从slave节点中选择一个上升为master节点，整个集群继续对外提供服务。</p>
+<p><code>twemproxy</code><br>twitter开源的代理分区方案。</p>
+<p><code>codis</code><br>豌豆荚开源的代理分区方案。</p>
+<p><code>客户端分片</code><br>分区的逻辑在客户端实现，由客户端自己选择请求到哪个节点。</p>
+<h4 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h4><ul>
+<li>keys指令会导致线程阻塞一段时间，线上服务会停顿，直到指令执行完毕，服务才能恢复。</li>
+<li>使得过期时间分散一些，否则可能会出现短暂的卡顿现象。</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/14/杂谈MySQL - 优化篇/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1683,148 +1908,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/13/Nginx应用 - 虚拟主机/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="hi@xiaopeng.li">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="李霄鹏的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/10/13/Nginx应用 - 虚拟主机/" itemprop="url">Nginx应用 - 虚拟主机</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-13T00:00:00+08:00">
-                2017-10-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/中间件/" itemprop="url" rel="index">
-                    <span itemprop="name">中间件</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h4 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h4><p>基于域名的虚拟主机。<br>同一IP，不同域名，解析到不同的服务。</p>
-<h4 id="配置示例"><a href="#配置示例" class="headerlink" title="配置示例"></a>配置示例</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  www.a.com;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        //转发到7421端口</span><br><span class="line">        proxy_pass   http://127.0.0.1:7421;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  www.b.com;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        //转发到7422端口</span><br><span class="line">        proxy_pass   http://127.0.0.1:7422;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1875,7 +1958,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-count">36</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

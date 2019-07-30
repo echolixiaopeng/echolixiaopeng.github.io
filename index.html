@@ -232,6 +232,248 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/08/Nginx应用 - log_format/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="hi@xiaopeng.li">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李霄鹏的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/05/08/Nginx应用 - log_format/" itemprop="url">Nginx配置 - Nginx应用 - log_format</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-08T00:00:00+08:00">
+                2019-05-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/中间件/" itemprop="url" rel="index">
+                    <span itemprop="name">中间件</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="配置示例"><a href="#配置示例" class="headerlink" title="配置示例"></a>配置示例</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">log_format  main  &apos;$remote_addr - $remote_user [$time_local] $request_time  $upstream_response_time &quot;$request&quot; &apos;</span><br><span class="line">                  &apos;$status $body_bytes_sent &quot;$http_referer&quot; &apos;</span><br><span class="line">                  &apos;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot; &quot;$upstream_addr&quot; &quot;$upstream_status&quot; &quot;$request_time&quot;&apos;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置说明"><a href="#配置说明" class="headerlink" title="配置说明"></a>配置说明</h4><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$remote_addr</td>
+<td>客户端地址</td>
+<td>219.227.111.255</td>
+</tr>
+<tr>
+<td>$remote_user</td>
+<td>客户端用户名称</td>
+<td>—</td>
+</tr>
+<tr>
+<td>$time_local</td>
+<td>访问时间和时区</td>
+<td>18/Jul/2014:17:00:01 +0800</td>
+</tr>
+<tr>
+<td>$request</td>
+<td>请求的URI和HTTP协议</td>
+<td>“GET /article-10000.html HTTP/1.1”</td>
+</tr>
+<tr>
+<td>$http_host</td>
+<td>请求地址，即浏览器中你输入的地址（IP或域名）</td>
+<td><a href="http://www.ha97.com198.98.120.87" target="_blank" rel="noopener">www.ha97.com198.98.120.87</a></td>
+</tr>
+<tr>
+<td>$status</td>
+<td>HTTP请求状态</td>
+<td>200</td>
+</tr>
+<tr>
+<td>$upstream_status</td>
+<td>upstream状态</td>
+<td>200</td>
+</tr>
+<tr>
+<td>$body_bytes_sent</td>
+<td>发送给客户端文件内容大小</td>
+<td>1547</td>
+</tr>
+<tr>
+<td>$http_referer</td>
+<td>url跳转来源</td>
+<td><a href="https://www.google.com/" target="_blank" rel="noopener">https://www.google.com/</a></td>
+</tr>
+<tr>
+<td>$http_user_agent</td>
+<td>用户终端浏览器等信息</td>
+<td>“Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; SV1; GTB7.0; .NET4.0C;</td>
+</tr>
+<tr>
+<td>$ssl_protocol</td>
+<td>SSL协议版本</td>
+<td>TLSv1</td>
+</tr>
+<tr>
+<td>$ssl_cipher</td>
+<td>交换数据中的算法</td>
+<td>RC4-SHA</td>
+</tr>
+<tr>
+<td>$upstream_addr</td>
+<td>后台upstream的地址，即真正提供服务的主机地址</td>
+<td>10.36.10.80:80</td>
+</tr>
+<tr>
+<td>$request_time</td>
+<td>整个请求的总时间</td>
+<td>0.165</td>
+</tr>
+<tr>
+<td>$upstream_response_time</td>
+<td>请求过程中，upstream响应时间</td>
+<td>0.002</td>
+</tr>
+</tbody></table>
+<h4 id="request-time-与-upstream-response-time"><a href="#request-time-与-upstream-response-time" class="headerlink" title="request_time 与 upstream_response_time"></a>request_time 与 upstream_response_time</h4><ol>
+<li>request_time<blockquote>
+<p>request processing time in seconds with a milliseconds resolution; time elapsed between the first bytes were read from the client and the log write after the last bytes were sent to the client 。</p>
+</blockquote>
+</li>
+</ol>
+<p>指从接受用户请求的第一个字节到发送完响应数据的时间，即包括接收请求数据时间、程序响应时间、输出响应数据时间。</p>
+<ol start="2">
+<li>upstream_response_time<blockquote>
+<p>keeps times of responses obtained from upstream servers; times are kept in seconds with a milliseconds resolution. Several response times are separated by commas and colons like addresses in the $upstream_addr variable</p>
+</blockquote>
+</li>
+</ol>
+<p>指从Nginx向后端（php-cgi)建立连接开始到接受完数据然后关闭连接为止的时间。</p>
+<p>从上面的描述可以看出，$request_time肯定大于等于$upstream_response_time，特别是使用POST方式传递参数时，因为Nginx会把request body缓存住，接受完毕后才会把数据一起发给后端。所以如果用户网络较差，或者传递数据较大时，$request_time会比$upstream_response_time大很多。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/13/Nginx应用 - 流量镜像/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1632,154 +1874,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/08/排错卷宗 - MySQL引发MongoDB查询慢/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="hi@xiaopeng.li">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="李霄鹏的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/08/08/排错卷宗 - MySQL引发MongoDB查询慢/" itemprop="url">排错卷宗 - MySQL引发MongoDB查询慢</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-08T00:00:00+08:00">
-                2018-08-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/排错卷宗/" itemprop="url" rel="index">
-                    <span itemprop="name">排错卷宗</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h4 id="场景还原"><a href="#场景还原" class="headerlink" title="场景还原"></a>场景还原</h4><blockquote>
-<p><code>小B</code>：小A，你X业务的查询还是很慢呀！<br><code>小A</code>：不可能呀，我昨天刚优化过速度，溜溜地！<br><code>小B</code>：不信你自己试一下就知道了。<br><code>小A</code>：我去。。。还真的可慢。<br><code>小A</code>：不对！优化过后的查询效率是没有问题的，肯定是发生了其他的事情。<br><code>小A</code>：其他基于MongoDB的业务查询也变慢了，难道是MongoDB出现了问题？<br><code>小A</code>：啃爹呀！系统资源快被MySQL吃完了，MongoDB能不慢？</p>
-</blockquote>
-<h4 id="问题定位"><a href="#问题定位" class="headerlink" title="问题定位"></a>问题定位</h4><p><code>微服务资源隔离</code><br>微服务之间应该是资源隔离的。每个微服务在不同系统进程，每个微服务应该有自己的数据库。</p>
-<p><code>SHOW PROCESSLIST</code><br>显示哪些线程正在运行。</p>
-<p><code>max_connections</code><br>当遇到MySQL的连接数不够用时，不可盲目扩大该配置。此举虽然可以暂时结局问题，但可能引起更大的问题，应该以优化减少连接入手。</p>
-<p><code>MySQL dbuser</code><br>不同的连接者尽量使用不同的dbuser，方便SHOW PROCESSLIST时，区别连接端。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1830,7 +1924,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-count">36</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
